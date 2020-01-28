@@ -20,13 +20,13 @@ def plot_single_img(to_plot, frame_num):
 def dict_key_len(dict_, key):
     return len(dict_[key])
 
-def make_tile(start_end, num_rep):
+def make_tile(start, end, num_rep):
     """
     Makes indices for tiles.
 
     Parameters
     ----------
-    start_end : list
+    start_end : int
         List with two items where first int is start sample relative to trial onset.
         Second int is end sample relative to trial onset.
 
@@ -41,14 +41,14 @@ def make_tile(start_end, num_rep):
 
     """
 
-    samp_vec = np.arange(start_end[0], start_end[1] + 1)  # grab all samples between start/end
+    samp_vec = np.arange(start, end + 1)  # grab all samples between start/end
 
     tile_array = np.tile(samp_vec, (num_rep, 1))
 
     return tile_array
 
 
-def extract_trial_data(data_snip, trial_window_samp, frame_events, conditions):
+def extract_trial_data(data_snip, start_samp, end_samp, frame_events, conditions):
     num_trials_cond = {}
     data_trial = {}
 
@@ -57,7 +57,7 @@ def extract_trial_data(data_snip, trial_window_samp, frame_events, conditions):
         # make an array where the sample indices are repeated in the y axis for n number of trials
         num_trials_cond[condition] = dict_key_len(frame_events, condition)
 
-        svec_tile = make_tile(trial_window_samp, num_trials_cond[condition])
+        svec_tile = make_tile(start_samp, end_samp, num_trials_cond[condition])
         num_trial_samps = svec_tile.shape[1]
 
         # now make a repeated matrix of each trial's ttl on sample in the x dimension
