@@ -46,3 +46,29 @@ def make_tile(start_end, num_rep):
     tile_array = np.tile(samp_vec, (num_rep, 1))
 
     return tile_array
+
+
+def extract_trial_data(data_snip, trial_window_samp, frame_events, conditions):
+    num_trials_cond = {}
+    data_trial = {}
+
+    for idx, condition in enumerate(conditions):
+        # convert window time bounds to samples and make a trial sample vector
+        # make an array where the sample indices are repeated in the y axis for n number of trials
+        num_trials_cond[condition] = dict_key_len(frame_events, condition)
+
+        svec_tile = make_tile(trial_window_samp, num_trials_cond[condition])
+        num_trial_samps = svec_tile.shape[1]
+
+        # now make a repeated matrix of each trial's ttl on sample in the x dimension
+        ttl_repmat = np.repeat(frame_events[condition][:, np.newaxis], num_trial_samps, axis=1).astype('int')
+
+        trial_sample_mat = ttl_repmat + svec_tile
+
+        # extract frames in trials and reshape the data
+        reshape_dim = data_snip.shape[:-1] + (svec_tile.shape)
+        data_trial[condition] = data_snip[:, :, np.ndarray.flatten(trial_sample_mat)].reshape(reshape_dim)
+
+    data_trial['num_samples'] = num_trial_samps
+
+    return data_trial, num_trials_cond
