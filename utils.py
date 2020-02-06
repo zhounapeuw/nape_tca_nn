@@ -49,15 +49,18 @@ def make_tile(start, end, num_rep):
 
 
 def extract_trial_data(data_snip, start_samp, end_samp, frame_events, conditions):
-    num_trials_cond = {}
-    data_trial = {}
+
+    data_dict = {}
 
     for idx, condition in enumerate(conditions):
+
+        data_dict[condition] = {}
+
         # convert window time bounds to samples and make a trial sample vector
         # make an array where the sample indices are repeated in the y axis for n number of trials
-        num_trials_cond[condition] = dict_key_len(frame_events, condition)
+        num_trials_cond = dict_key_len(frame_events, condition)
 
-        svec_tile = make_tile(start_samp, end_samp, num_trials_cond[condition])
+        svec_tile = make_tile(start_samp, end_samp  , num_trials_cond)
         num_trial_samps = svec_tile.shape[1]
 
         # now make a repeated matrix of each trial's ttl on sample in the x dimension
@@ -67,8 +70,9 @@ def extract_trial_data(data_snip, start_samp, end_samp, frame_events, conditions
 
         # extract frames in trials and reshape the data
         reshape_dim = data_snip.shape[:-1] + (svec_tile.shape)
-        data_trial[condition] = data_snip[:, :, np.ndarray.flatten(trial_sample_mat)].reshape(reshape_dim)
+        data_dict[condition]['data'] = data_snip[:, :, np.ndarray.flatten(trial_sample_mat)].reshape(reshape_dim)
 
-    data_trial['num_samples'] = num_trial_samps
+        data_dict[condition]['num_samples'] = num_trial_samps
+        data_dict[condition]['num_trials'] = num_trials_cond
 
-    return data_trial, num_trials_cond
+    return data_dict
