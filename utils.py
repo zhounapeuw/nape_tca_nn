@@ -68,10 +68,13 @@ def extract_trial_data(data_snip, start_samp, end_samp, frame_events, conditions
 
         trial_sample_mat = ttl_repmat + svec_tile
 
-        # extract frames in trials and reshape the data
+        # extract frames in trials and reshape the data to be: y,x,trials,samples
+        # basically unpacking the last 2 dimensions
         reshape_dim = data_snip.shape[:-1] + (svec_tile.shape)
-        data_dict[condition]['data'] = data_snip[:, :, np.ndarray.flatten(trial_sample_mat)].reshape(reshape_dim)
+        extracted_trial_dat = data_snip[:, :, np.ndarray.flatten(trial_sample_mat)].reshape(reshape_dim)
 
+        # reorder dimensions and put trial as first dim
+        data_dict[condition]['data'] = extracted_trial_dat.transpose((2, 0, 1, 3))
         data_dict[condition]['num_samples'] = num_trial_samps
         data_dict[condition]['num_trials'] = num_trials_cond
 
