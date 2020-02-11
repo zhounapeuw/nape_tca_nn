@@ -17,6 +17,54 @@ def plot_single_img(to_plot, frame_num):
     plt.title(f'Frame {frame_num}', fontsize=20)
     plt.axis('off')
 
+
+def subplot_heatmap(axs, title, image, cmap="seismic", clims=None, zoom_window=None):
+    """
+        Takes in a numpy 2d array and a subplot location, and plots a heatmap at the subplot location without axes
+
+        Parameters
+        ----------
+        axs : matplotlib AxesSubplot object
+            Specific subplot from the ax output of pyplot.subplots()
+
+        title : string
+            Title name of the plot
+
+        image : numpy 2d array
+
+        cmap : string or colormap
+            Colormap desired; default is seismic
+
+        Optional Parameters
+        -------------------
+
+        clims : list
+            List with entries: [minimum_colorbar_limit, maximum_colorbar_limit] . This is for setting the color ranges
+            for the heatmap
+
+        zoom_window : list
+            List with entries: [xmin, xmax, ymin, ymax] . This is for zooming into the specific window dictated by the
+            x min and max, and y min and max locations
+
+        Returns
+        -------
+        im : ndarray
+            imshow AxesImage object. Used to reference the dataset for a colorbar (eg. fig.colorbar(im) )
+
+        """
+
+    im = axs.imshow(image, cmap)
+    axs.set_title(title, fontsize=20)
+
+    if zoom_window is not None:
+        im.set_clim(vmin=clims[0], vmax=clims[1])
+        axs.axis(zoom_window)
+        axs.invert_yaxis()
+
+    axs.axis('off')
+
+    return im  # for colorbar
+
 def dict_key_len(dict_, key):
     return len(dict_[key])
 
