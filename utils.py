@@ -96,7 +96,39 @@ def make_tile(start, end, num_rep):
     return tile_array
 
 
-def extract_trial_data(data_snip, start_samp, end_samp, frame_events, conditions):
+def extract_trial_data(data, start_samp, end_samp, frame_events, conditions):
+    """
+        Takes a 3d video (across a whole session) and cuts out trials based on event times.
+        Also groups trial data by condition
+
+        Parameters
+        ----------
+        data : numpy 3d array
+            3d video data where dimensions are (y_pixel, x_pixel, samples)
+
+        start_samp : int
+            Number of samples before the event time for trial start
+
+        end_samp : int
+            Number of samples after the event time for trial end
+
+        frame_events : dictionary of np 1d arrays (vectors)
+            Dictionary where keys are the conditions in the session and values are numpy 1d vectors that contain
+            event occurrences as samples
+
+        conditions : list of strings
+            Each entry in the list is a condition to extract trials from; must correspond to keys in frame_events
+
+        Returns
+        -------
+        data_dict : dictionary
+            1st level of dict keys: individual conditions
+                2nd level of keys :
+                    data : numpy 4d array with dimensions (trials,y,x,samples)
+                    num_samples : number of samples (time) in a trial
+                    num_trials : total number of trials in the condition
+
+        """
 
     data_dict = {}
 
@@ -118,8 +150,8 @@ def extract_trial_data(data_snip, start_samp, end_samp, frame_events, conditions
 
         # extract frames in trials and reshape the data to be: y,x,trials,samples
         # basically unpacking the last 2 dimensions
-        reshape_dim = data_snip.shape[:-1] + (svec_tile.shape)
-        extracted_trial_dat = data_snip[:, :, np.ndarray.flatten(trial_sample_mat)].reshape(reshape_dim)
+        reshape_dim = data.shape[:-1] + (svec_tile.shape)
+        extracted_trial_dat = data[:, :, np.ndarray.flatten(trial_sample_mat)].reshape(reshape_dim)
 
         # reorder dimensions and put trial as first dim
         data_dict[condition]['data'] = extracted_trial_dat.transpose((2, 0, 1, 3))
