@@ -17,7 +17,6 @@ def plot_single_img(to_plot, frame_num):
     plt.title(f'Frame {frame_num}', fontsize=20)
     plt.axis('off')
 
-
 def subplot_heatmap(axs, title, image, cmap="seismic", clims=None, zoom_window=None):
     """
         Takes in a numpy 2d array and a subplot location, and plots a heatmap at the subplot location without axes
@@ -95,6 +94,12 @@ def make_tile(start, end, num_rep):
 
     return tile_array
 
+def remove_trials_out_of_bounds(data_end, these_frame_events, start_samp, end_samp):
+
+    after_start_bool = (these_frame_events + start_samp) > start_samp
+    before_end_bool = (these_frame_events + end_samp) < data_end
+
+    return these_frame_events[after_start_bool*before_end_bool]
 
 def extract_trial_data(data, start_samp, end_samp, frame_events, conditions):
     """
@@ -136,11 +141,14 @@ def extract_trial_data(data, start_samp, end_samp, frame_events, conditions):
 
         data_dict[condition] = {}
 
+        # get rid of trials that are outside of the session bounds with respect to time
+        data_end_sample = data.shape[-1]
+        frame_events[condition] = remove_trials_out_of_bounds(data_end_sample, frame_events[condition], start_samp, end_samp)
+
         # convert window time bounds to samples and make a trial sample vector
         # make an array where the sample indices are repeated in the y axis for n number of trials
-        num_trials_cond = dict_key_len(frame_events, condition)
-
-        svec_tile = make_tile(start_samp, end_samp  , num_trials_cond)
+        num_trials_cond = len(frame_events[condition])
+        svec_tile = make_tile(start_samp, end_samp, num_trials_cond)
         num_trial_samps = svec_tile.shape[1]
 
         # now make a repeated matrix of each trial's ttl on sample in the x dimension
