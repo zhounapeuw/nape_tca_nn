@@ -56,9 +56,11 @@ def subplot_heatmap(axs, title, image, cmap="seismic", clims=None, zoom_window=N
     axs.set_title(title, fontsize=20)
 
     if zoom_window is not None:
-        im.set_clim(vmin=clims[0], vmax=clims[1])
         axs.axis(zoom_window)
         axs.invert_yaxis()
+
+    if clims is not None:
+        im.set_clim(vmin=clims[0], vmax=clims[1])
 
     axs.axis('off')
 
