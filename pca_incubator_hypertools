@@ -1,0 +1,53 @@
+# load dependencies
+import h5py
+import tensortools as tt # toolbox for TCA
+import numpy as np
+import matplotlib.pyplot as plt
+import glob
+import pickle # for loading behav data
+import utils
+import importlib as imp
+import pandas as pd
+
+import xarray # for organizing and storing the data
+import pandas as pd
+from sklearn_xarray import wrap
+from sklearn.decomposition import PCA
+from sklearn.decomposition import NMF
+
+# 3d state space plot
+from matplotlib.colors import ListedColormap, BoundaryNorm
+from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Line3DCollection
+import hypertools as hyp
+
+import matplotlib
+# important for text to be detecting when importing saved figures into illustrator
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
+
+# indicate a file to analyze
+filename = 'VJ_OFCVTA_7_260_D6'
+root_dir = 'C:\\2pData\\Vijay data\\VJ_OFCVTA_7_D8_trained\\'
+sima_h5_path = root_dir + filename + '_sima_mc.h5'
+
+# set the sampling rate
+fs = 5
+
+data_snip = utils.load_h5(sima_h5_path)
+data_snip.shape
+
+# calculate some meta data
+data_dims = data_snip.shape
+tvec = np.linspace(0, data_dims[2]/fs, data_dims[2])
+# trial windowing
+trial_window = np.array([-1, 3]) # in seconds relative to ttl-onset/trial-onset
+
+#load behavioral data and trial info
+glob_frame_files = glob.glob(root_dir + "framenumberforevents*") # look for a file in specified directory
+frame_events = pickle.load( open( glob_frame_files[0], "rb" ), encoding="latin1" ) # latin1 b/c original pickle made in python 2
+
+#load behavioral data and trial info
+glob_frame_files = glob.glob(root_dir + "framenumberforevents*") # look for a file in specified directory
+frame_events = pickle.load( open( glob_frame_files[0], "rb" ), encoding="latin1" ) # latin1 b/c original pickle made in python 2
