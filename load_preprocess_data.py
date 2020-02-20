@@ -9,22 +9,6 @@ import os
 import xarray # for organizing and storing the data 
 import pandas as pd
 
-# indicate a file to analyze
-fname = 'VJ_OFCVTA_7_260_D6'
-fdir = 'C:\\2pData\\Vijay data\\VJ_OFCVTA_7_D8_trained\\'
-sima_h5_path = os.path.join(fdir, fname + '_sima_mc.h5')
-
-# set the sampling rate
-fs = 5
-trial_start_end_seconds = np.array([-1, 3]) # trial windowing in seconds relative to ttl-onset/trial-onset
-
-conditions = ['minus', 'plus_rewarded']
-
-""" number of segments to split trials over. Ie. Because single trial plots in state space is noisy, 
-    let's break the trials up into groups and average to get less noisier signal.
-"""
-num_avg_groups = 5.0
-
 def load(fdir, fs, trial_start_end_seconds, conditions, num_avg_groups):
     
     """
