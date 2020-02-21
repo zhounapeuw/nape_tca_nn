@@ -9,13 +9,16 @@ import os
 import xarray # for organizing and storing the data 
 import pandas as pd
 
-def load(fdir, fs, trial_start_end_seconds, conditions, num_avg_groups):
+def load(fname, fdir, fs, trial_start_end_seconds, conditions, num_avg_groups):
     
     """
     Takes in a numpy 2d array and a subplot location, and plots a heatmap at the subplot location without axes
 
     Parameters
     ----------
+    fname : string
+        file name
+
     fdir : string
         root file directory. Needs to have a "_framenumberforevents.pkl" file that corresponds to the session!!
 
@@ -43,6 +46,7 @@ def load(fdir, fs, trial_start_end_seconds, conditions, num_avg_groups):
 
     """
 
+    sima_h5_path = os.path.join(fdir, fname + '_sima_mc.h5')
     data_snip = utils.load_h5(sima_h5_path)
 
     data_dims = data_snip.shape
