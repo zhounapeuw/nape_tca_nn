@@ -53,11 +53,10 @@ def load(fname, fdir, fs, trial_start_end_seconds, conditions, num_avg_groups):
     tvec = np.linspace(0, data_dims[2]/fs, data_dims[2])
 
     #load behavioral data and trial info
-    try:
-        glob_frame_files = glob.glob(fdir + "framenumberforevents*") # look for a file in specified directory
-        frame_events = pickle.load( open( glob_frame_files[0], "rb" ), encoding="latin1" ) # latin1 b/c original pickle made in python 2
-    except:
-        print('Cannot find behavioral data file or file path is incorrect; utils.extract_trial_data will throw error.')
+    
+    glob_frame_files = glob.glob(os.path.join(fdir, "framenumberforevents*")) # look for a file in specified directory
+    frame_events = pickle.load( open( glob_frame_files[0], "rb" ), encoding="latin1" ) # latin1 b/c original pickle made in python 2
+
         
     # with trial start/end samples, 
     trial_window_samp = trial_start_end_seconds*fs # turn trial start/end times to samples
